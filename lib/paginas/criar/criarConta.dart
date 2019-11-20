@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import '../../provider/login.dart';
 import '../herramientas.dart';
+import '../../Clases/professional.dart';
 class CriarPage extends StatefulWidget {
 
   @override
@@ -15,7 +16,6 @@ class CriarPage extends StatefulWidget {
 class _CriarPageState extends State<CriarPage> {
   
   // maintains validators and state of form fields
-  final GlobalKey<FormState> _loginFormKey = GlobalKey<FormState>();
   TextEditingController controlerEmail = new TextEditingController();
   TextEditingController controlerPassword = new TextEditingController();
   TextEditingController controlerRePassword = new TextEditingController();
@@ -27,7 +27,6 @@ class _CriarPageState extends State<CriarPage> {
   // esta es la llamada asincrona del progress HUD widget
   bool _isInAsyncCall = false;
   Future _submit() async {
-    final login = Provider.of<Loguearse>(context); 
       // dismiss keyboard during async call
       FocusScope.of(context).requestFocus(new FocusNode());
       // start the modal progress HUD
@@ -45,13 +44,19 @@ class _CriarPageState extends State<CriarPage> {
             "company_name": controlerClinica.text
         });
         print(body);
-        final response = await http.post('https://mobile.santeodonto.io/api/v1/register_new_company',  body: body);
+        final response = await http.post('https://mobile.santeodonto.io/api/v1/register_new_company', headers: {"Content-Type": "application/json"} ,body: body);
         print(response.body); 
         print(response.statusCode); 
         if (response.statusCode == 200) {
           print(json.decode(response.body));
           var dato = json.decode(response.body);
-         
+          var error = dato['erros']; 
+          if(dato['erros'] != null){
+            msgbox(error.toString(), 'Erro', context);
+          }else{
+            msgbox(dato['message'].toString(), 'Successo', context);
+          }
+          
           setState(() {
             _isInAsyncCall = false;
           });
@@ -60,8 +65,7 @@ class _CriarPageState extends State<CriarPage> {
             _isInAsyncCall = false;
           });
           var dato = json.decode(response.body);         
-          msgbox(dato['errors'], 'Erro', context);
-
+          msgbox('Erro', 'Erro', context);
         }
       });
   }
@@ -94,12 +98,32 @@ class _CriarPageState extends State<CriarPage> {
                       bottomRight: const  Radius.circular(60.0)
                 )
               ),
-              child: Image(
-                height: 80,
-                width: 80,
-                image: AssetImage(
-                  "assets/images/Logo Sante Odonto.png"
-                ),
+              child: Stack(
+                children: <Widget>[
+                  Positioned(
+                    left: 10,
+                    top: 40,
+                    child:  InkWell(
+                      onTap: (){
+                          Navigator.pushReplacementNamed(context, '/Login');
+                      },
+                      child: Icon(
+                        Icons.keyboard_arrow_left,
+                        size: 40,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    top: 80,
+                    left: 100,
+                    child: Image(
+                      image: AssetImage(
+                        "assets/images/Logo Sante Odonto.png"
+                      ),
+                    ),
+                  ),
+                ] 
               ),   
           ),
           Padding(

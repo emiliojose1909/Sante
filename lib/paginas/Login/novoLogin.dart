@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import '../../provider/login.dart';
 import '../herramientas.dart';
+import '../../Clases/professional.dart';
 class LoginPage extends StatefulWidget {
   final VoidCallback _onSignIn;
   
@@ -77,20 +78,27 @@ class _LoginPageState extends State<LoginPage> {
             "email": _username,
             "password": _password,
         });
-        print(body);
-        final response = await http.post('https://mobile.santeodonto.io/api/v1/auth/sign_in',  body: body);
-        print(response.body); 
-        print(response.statusCode); 
+        final response = await http.post('https://mobile.santeodonto.io/api/v1/auth/sign_in', headers: {"Content-Type": "application/json"} ,body: body);
+        
         if (response.statusCode == 200) {
           print(json.decode(response.body));
           var dato = json.decode(response.body);
-         
-           setState(() {
+          var aux = dato["data"]; 
+          
+          Professional profesional;
+          User user;
+          user = User.fromJson(aux['user']);
+          profesional = Professional.fromJson(aux['professional']);
+          login.loguearse(true, profesional, user);
+          print(profesional.active);
+          print(user.active);
+          msgbox('Login successful!', 'Successo', context);
+          setState(() {
              _isLoggedIn = true;
              _isInvalidAsyncUser = false;
              _isInvalidAsyncPass = false;
              _isInAsyncCall = false; //la llamada para des'sincronizar la funcion
-           });
+          });
         }else  if(response.statusCode == 202){      
           var dato = json.decode(response.body);         
           msgbox(dato['errors'], 'Erro', context);
@@ -214,7 +222,9 @@ class _LoginPageState extends State<LoginPage> {
                     Padding(
                       padding: const EdgeInsets.only(left: 10.0),
                       child: InkWell(
-                        onTap: (){},
+                        onTap: (){
+                          Navigator.pushReplacementNamed(context, '/Esqueci');
+                        },
                         child: Text(
                           "Esqueci a Senha",
                           style: TextStyle(
@@ -227,7 +237,9 @@ class _LoginPageState extends State<LoginPage> {
                     Padding(
                       padding: const EdgeInsets.only(right: 10.0),
                       child: InkWell(
-                        onTap: (){},
+                        onTap: (){
+                          Navigator.pushReplacementNamed(context, '/Criar');
+                        },
                         child: Text(
                           "Criar uma Conta",
                           style: TextStyle(
