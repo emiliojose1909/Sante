@@ -35,7 +35,7 @@ class _LoginPageState extends State<LoginPage> {
 
   // validaciones de username
   String _validateUserName(String userName) {
-    if (userName.length < 4) {
+    /*if (userName.length < 4) { //para campos de texto 
       return 'E-mail deve ter 4 characters';
     }
 
@@ -44,13 +44,29 @@ class _LoginPageState extends State<LoginPage> {
       _isInvalidAsyncUser = false;
       return 'E-mail Invalido';
     }
-    return null;
+    return null;*/
+    if (userName.isEmpty) { //para validacion de correo
+      return 'Email Vazio!';
+    }
+    // Regex for email validation
+    String p = "[a-zA-Z0-9\+\.\_\%\-\+]{1,256}" +
+        "\\@" +
+        "[a-zA-Z0-9][a-zA-Z0-9\\-]{0,64}" +
+        "(" +
+        "\\." +
+        "[a-zA-Z0-9][a-zA-Z0-9\\-]{0,25}" +
+        ")+";
+    RegExp regExp = new RegExp(p);
+    if (regExp.hasMatch(userName)) {
+      return null;
+    }
+    return 'Email Invalido';
   }
 
   // validate password
   String _validatePassword(String password) {
-    if (password.length < 3) {
-      return 'Senha deve ter min 3 characters';
+    if (password.length < 6) {
+      return 'Senha deve ter min 6 characters';
     }
 
     if (_isInvalidAsyncPass) {
@@ -83,13 +99,13 @@ class _LoginPageState extends State<LoginPage> {
         if (response.statusCode == 200) {
           print(json.decode(response.body));
           var dato = json.decode(response.body);
+          var he = response.headers;
           var aux = dato["data"]; 
-          
           Professional profesional;
           User user;
           user = User.fromJson(aux['user']);
           profesional = Professional.fromJson(aux['professional']);
-          login.loguearse(true, profesional, user);
+          login.loguearse(true, profesional, user, he['client'], he['uid'], he['access-token']);
           print(profesional.active);
           print(user.active);
           msgbox('Login successful!', 'Successo', context);
@@ -136,7 +152,7 @@ class _LoginPageState extends State<LoginPage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: (){
-          Navigator.pushReplacementNamed(context, '/Menu');
+          Navigator.pushReplacementNamed(context, '/MenuNovo');
         },
         child: Icon(Icons.arrow_back),
       ),
@@ -149,7 +165,7 @@ class _LoginPageState extends State<LoginPage> {
       children: <Widget>[
         Container(
             width: double.infinity,
-            height: 300,
+            height: MediaQuery.of(context).size.height / 3,
             decoration: BoxDecoration(
               color: Color.fromRGBO(9, 162, 241, 1),
               borderRadius: BorderRadius.only(
@@ -251,10 +267,36 @@ class _LoginPageState extends State<LoginPage> {
                     )
                   ],
                 ),
+                
               ],
             ),
           ),
         ),
+        
+                Row(
+                  
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: <Widget>[
+                    Container(                      
+                      width: 140,
+                      height: 140,
+                      child: Image.asset(
+                        'assets/images/Grupo de máscara 2@3x.png'
+                      ),
+                    ),
+                    Container(
+                      padding: EdgeInsets.all(0),
+                      margin: EdgeInsets.only(bottom: 20),
+                      width: 110,
+                      height: 140,
+                      child: Image.asset(
+                        'assets/images/Grupo de máscara 3@3x.png'
+                      ),
+                    ),
+                    
+                  ],
+                ),  
       ],
     );
   }

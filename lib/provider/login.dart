@@ -5,10 +5,16 @@ class Loguearse with ChangeNotifier{
   bool _logueado;
   Professional professional;
   User user;
-  loguearse(bool logueo, Professional prof, User user){
+  String client;
+  String uid;
+  String accessToken;
+  loguearse(bool logueo, Professional prof, User user, String client, String uid, String token){
     this.logueado = logueo;
     this.professional = prof;
     this.user = user;
+    this.client = client;
+    this.uid = uid;
+    this.accessToken = token;
     notifyListeners();
   }
   getlogueado(){

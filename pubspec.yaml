@@ -19,6 +19,7 @@ dependencies:
   json_serializable: ^2.0.0
   flutter_calendar: ^0.0.1
   cupertino_icons: ^0.1.2
+  cached_network_image: ^1.1.3
 
 dev_dependencies:
   flutter_test:
@@ -37,5 +38,9 @@ flutter:
   - assets/images/lock.png
   - assets/images/Logo Sante Odonto@2x.png
   - assets/images/Logo Sante Odonto.png
-
+  - assets/images/Grupo de máscara 3@2x.png
+  - assets/images/Grupo de máscara 2@3x.png
+  - assets/images/Grupo de máscara 3@3x.png
+  - assets/images/Caminho 33@3x.png
+  - assets/images/img_958.png
  
